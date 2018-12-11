@@ -4,3 +4,7 @@ sudoku.sln
 sudoku.vcxproj
 sudoku.vcxproj.filters
 sudoku.vcxproj.user
+##############################
+## Folders                  ##
+##############################
+Debug

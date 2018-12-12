@@ -1,9 +1,13 @@
+//定义了void createSudoku(int n, string fileName);方法
 #pragma once
-#include<cstring>
-
 #ifndef SUDOKU_H
 #define SUDOKU_H
 
-st
+#include<cstring>
+#include<string>
+
+using namespace std;
+
+void createSudoku(int n, string fileName);
 
 #endif // !SUDOKU_H

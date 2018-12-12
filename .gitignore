@@ -8,3 +8,6 @@ sudoku.vcxproj.user
 ## Folders                  ##
 ##############################
 Debug
+
+#MyFile
+sudoku.txt

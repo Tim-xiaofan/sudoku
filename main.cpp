@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 		cout << "n = " << n << endl;
 		cout << " 开始生成数独终局文件 " << endl;
 		//生成数独终局文件suduku.txt
-		createSudoku(n, fileName);
+		createSudokuFile(n, fileName);
 	}
 	if (flag == FORS) {//求解数独
 		cout << " 开始求解数独 " << endl;

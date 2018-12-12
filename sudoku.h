@@ -8,6 +8,6 @@
 
 using namespace std;
 
-void createSudoku(int n, string fileName);
+void createSudokuFile(int n, string fileName);
 
 #endif // !SUDOKU_H

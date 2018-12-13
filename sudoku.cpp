@@ -21,11 +21,11 @@ const string filename = "sudoku.txt";
 
 
 //用于调试
-void printArray(int a[], int n) {
+/*void printArray(int a[], int n) {
 	for (int i = 0; i < n; i++)
 		cout << a[i] << " ";
 	cout << "\n";
-}
+}*/
 
 /*******************************************************/
 //类ArgCheck的实现
@@ -180,11 +180,6 @@ void SudokuFactory::newFromModel() {
 			//剩余需求量变化-1
 			need--;
 			string oneSudokuString = firstThreeRows + midThreeRows + lastThreeRows;
-			if (isEnough()) {
-				//cout << "end: need = " << need << endl;
-				sudokuStore += oneSudokuString;
-				return;
-			}
 			//cout << "need = " << need << endl;
 			//cout << "transB:";
 			sudokuStore += oneSudokuString;
@@ -209,11 +204,11 @@ string SudokuFactory::createSudokuFile() {
 	return sudokuStore;
 }
 
-void printSudoku(int a[N][N]) {
+/*void printSudoku(int a[N][N]) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++)
 			cout << a[i][j] << " ";
 		cout << "\n";
 	}
 	cout << "\n";
-}
+}*/

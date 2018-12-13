@@ -54,9 +54,10 @@ public:
 	void refreshModel();
 	//在原始阵列基础上进行变换并输出36个排列
 	void newFromModel();
+	//生成终局文件
+	string createSudokuFile();
+	string getsudokuStore() { return sudokuStore; }
 };
-
-
 
 
 

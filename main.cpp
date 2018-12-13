@@ -33,6 +33,7 @@ int main(int argc, char** argv) {
 		//生成数独终局文件suduku.txt
 		//createSudokuFile(n, fileName);
 		SudokuFactory factory(n);
+		factory.createSudokuFile();
 	}
 	if (flag == ArgCheck::FORS) {//求解数独
 		cout << " 开始求解数独 " << endl;

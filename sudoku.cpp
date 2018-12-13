@@ -209,27 +209,141 @@ bool isPurenumber(char* s) {
 //类SudokuFactory的实现
 //生成第一个模板
 void SudokuFactory::createFirstModel() {
+	void printSudoku(int a[N][N]);
 	int number[N] = { 1,2, 3, 4, 5, 6, 7, 8, 9 };
 	//随机确定最开始的排列
 	srand((unsigned int)time(NULL));
 	int ran = 0 + rand() % randow;
-	cout << "AtomCreate...." << endl;
+	//cout << "AtomCreate...." << endl;
 	for (int i = 0; i < ran; i++)
 		next_permutation(number + 1, number + N);
 	//填入学号
 	firstR[0] = 1;
 	for (int i = 1; i < N; i++)
 		firstR[i] = number[i];
-	cout << "第一行:\n";
-	printArray(firstR, N);
-
+	//cout << "第一个排列:\n";
+	//printArray(firstR, N);
+	//产生模板阵列数组
+	//填入第一行
+	for (int j = 0; j < N; j++)
+		model[0][j] = firstR[j];
+	//剩余行
+	for (int i = 1; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			int k = (j + (N - i)) % N;//计算偏移坐标
+			//cout << " deta= " << (N - i) << endl;
+			model[i][j] = firstR[k];
+		}
+	}
+	//cout << "第一个model:\n";
+	//printSudoku(model);
 }
+
 
 //更新模板
 void SudokuFactory::refreshModel() {
+	void printSudoku(int a[N][N]);
 	next_permutation(firstR + 1, firstR + N);//取得下一个排列
+	//cout << "新的排列:\n";
+	//printArray(firstR, N);
+	//产生模板阵列数组
+	//填入第一行
+	for (int j = 0; j < N; j++)
+		model[0][j] = firstR[j];
+	//剩余行
+	for (int i = 1; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			int k = (j + (N - i)) % N;//计算偏移坐标
+			//cout << " deta= " << (N - i) << endl;
+			model[i][j] = firstR[k];
+		}
+	}
+	//cout << "新的model:\n";
+	//printSudoku(model);
 }
 
+//在原始阵列基础上进行变换并保存36个排列
+void SudokuFactory::newFromModel() {
+	int A[3] = { 4, 5, 6 };//456为一组
+	int B[3] = { 7, 8, 9 };//456为一组
+	//前三行不变
+	string firstThreeRows = "";// 保存123行
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < N - 1; j++) {
+			firstThreeRows += to_string(model[i][j]);
+			firstThreeRows += " ";
+		}
+		firstThreeRows += to_string(model[i][N - 1]);
+		firstThreeRows += "\n";//换行
+	}
+	//cout << sudokuString;
+	for (int a = 0; a < 6; a++) {
+		//确定A组456,的一个排列
+		//cout << "!!!!!!!!!!A:\n";
+		//printArray(A, 3);
+		string midThreeRows = "";//保存456行
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < N - 1; j++) {
+				//每生成一个数字，直接保存。注意空格和换行。
+				//cout << "（" << sudokuArray[A[index] - 1][j] << "）";
+				midThreeRows += to_string(model[A[i] - 1][j]);
+				midThreeRows += " ";
+				//cout <<"\n<"<< sudokuString << ">" << endl;
+				//cout << sudokuString;
+			}
+			//cout << "（" << sudokuArray[A[index] - 1][N - 1] << "）" << endl;
+			midThreeRows += to_string(model[A[i] - 1][N - 1]);//行尾没有空格
+			//cout << "\n<" << sudokuString << ">" << endl;
+			midThreeRows += "\n";//换行
+		}
+		//cout << "transA:";
+		//cout << "\n<" << sudokuString << ">" << endl;
+		//同一个A的排列可以有6种不同的排列
+		for (int b = 0; b < 6; b++) {
+			//确定B组789，的一个排列
+			//cout << "B:\n";
+			//printArray(B, 3);
+			string lastThreeRows = "";
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < N - 1; j++) {
+					//每生成一个数字，直接保存。注意空格和换行。
+					//cout << "（" << sudokuArray[B[index] - 1][j] << "）";
+					lastThreeRows += to_string(model[B[i] - 1][j]);
+					lastThreeRows += " ";
+				}
+				//cout << "（" << sudokuArray[B[index] - 1][N - 1] << "）" << endl;
+				lastThreeRows += to_string(model[B[i] - 1][N - 1]);//行尾没有空格
+				lastThreeRows += "\n";//换行
+				//cout << sudokuString;
+			}
+			//剩余需求量变化-1
+			need--;
+			if (isEnough())return;
+			//cout << "need = " << need << endl;
+			//cout << "transB:";
+			string oneSudokuString = firstThreeRows + midThreeRows + lastThreeRows;
+			sudokuStore += oneSudokuString;
+			//cout << oneSudokuString;
+			if (need == 0) return;//为零则，结束生成
+			//cout << "\n";//添加数独阵列间空行
+			sudokuStore += "\n";
+			//B的下一个排列
+			next_permutation(B, B + 3);
+		}
+		//A的下一个排列
+		next_permutation(A, A + 3);
+	}
+}
+
+//生成终局文件
+string SudokuFactory::createSudokuFile() {
+	while (need > 0) {
+		newFromModel();
+		refreshModel();
+	}
+	cout << sudokuStore;
+	return sudokuStore;
+}
 
 void printSudoku(int a[N][N]) {
 	for (int i = 0; i < N; i++) {
@@ -237,4 +351,5 @@ void printSudoku(int a[N][N]) {
 			cout << a[i][j] << " ";
 		cout << "\n";
 	}
+	cout << "\n";
 }

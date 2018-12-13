@@ -56,7 +56,7 @@ void createSudokuFile(int n, string filename) {
 		newFromModel();
 		next_permutation(firstRow + 1, firstRow + N);
 	}
-	cout << sudokuFileString;
+	//cout << sudokuFileString;
 	outputSudoku(filename);
 }
 

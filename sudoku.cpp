@@ -10,7 +10,7 @@ using namespace std;
 
 const int N = 9;
 
-const int No = 1;//学号1120161736
+const char No = '1';//学号1120161736
 
 int firstRow[N] = { No,2 ,3, 4 , 5, 6, 7, 8, 9 };//保存第一行
 
@@ -69,7 +69,7 @@ bool isPurenumber(char* s) {
 //生成第一个模板
 void SudokuFactory::createFirstModel() {
 	void printSudoku(int a[N][N]);
-	int number[N] = { 1,2, 3, 4, 5, 6, 7, 8, 9 };
+	char number[N] = { '1','2', '3', '4', '5', '6', '7', '8', '9' };
 	//随机确定最开始的排列
 	srand((unsigned int)time(NULL));
 	int ran = 0 + rand() % randow;
@@ -77,7 +77,7 @@ void SudokuFactory::createFirstModel() {
 	for (int i = 0; i < ran; i++)
 		next_permutation(number + 1, number + N);
 	//填入学号
-	firstR[0] = 1;
+	firstR[0] = '1';
 	for (int i = 1; i < N; i++)
 		firstR[i] = number[i];
 	//cout << "第一个排列:\n";
@@ -131,10 +131,10 @@ void SudokuFactory::newFromModel() {
 	string firstThreeRows = "";// 保存123行
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < N - 1; j++) {
-			firstThreeRows += to_string(model[i][j]);
+			firstThreeRows += (model[i][j]);
 			firstThreeRows += " ";
 		}
-		firstThreeRows += to_string(model[i][N - 1]);
+		firstThreeRows += (model[i][N - 1]);
 		firstThreeRows += "\n";//换行
 	}
 	//cout << sudokuString;
@@ -147,13 +147,13 @@ void SudokuFactory::newFromModel() {
 			for (int j = 0; j < N - 1; j++) {
 				//每生成一个数字，直接保存。注意空格和换行。
 				//cout << "（" << sudokuArray[A[index] - 1][j] << "）";
-				midThreeRows += to_string(model[A[i] - 1][j]);
+				midThreeRows += (model[A[i] - 1][j]);
 				midThreeRows += " ";
 				//cout <<"\n<"<< sudokuString << ">" << endl;
 				//cout << sudokuString;
 			}
 			//cout << "（" << sudokuArray[A[index] - 1][N - 1] << "）" << endl;
-			midThreeRows += to_string(model[A[i] - 1][N - 1]);//行尾没有空格
+			midThreeRows += (model[A[i] - 1][N - 1]);//行尾没有空格
 			//cout << "\n<" << sudokuString << ">" << endl;
 			midThreeRows += "\n";//换行
 		}
@@ -169,11 +169,11 @@ void SudokuFactory::newFromModel() {
 				for (int j = 0; j < N - 1; j++) {
 					//每生成一个数字，直接保存。注意空格和换行。
 					//cout << "（" << sudokuArray[B[index] - 1][j] << "）";
-					lastThreeRows += to_string(model[B[i] - 1][j]);
+					lastThreeRows += (model[B[i] - 1][j]);
 					lastThreeRows += " ";
 				}
 				//cout << "（" << sudokuArray[B[index] - 1][N - 1] << "）" << endl;
-				lastThreeRows += to_string(model[B[i] - 1][N - 1]);//行尾没有空格
+				lastThreeRows += (model[B[i] - 1][N - 1]);//行尾没有空格
 				lastThreeRows += "\n";//换行
 				//cout << sudokuString;
 			}

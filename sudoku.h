@@ -35,8 +35,8 @@ public:
 class SudokuFactory {
 	static const int N = 9;
 	int need;//剩余需求量
-	int firstR[N];
-	int model[N][N];//模板
+	char firstR[N];
+	char model[N][N];//模板
 	string sudokuStore;//保存终局
 public:
 	SudokuFactory(int m_need = 0 ) {
@@ -58,9 +58,5 @@ public:
 	string createSudokuFile();
 	string getsudokuStore() { return sudokuStore; }
 };
-
-
-
-void createSudokuFile(int n, string fileName);
 
 #endif // !SUDOKU_H

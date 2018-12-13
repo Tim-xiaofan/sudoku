@@ -12,7 +12,7 @@ using namespace std;
 class ArgCheck{
 	int argc;
 	char** argv;
-	int checkResult;//表明用户参数的合法与否，辨别用户想要做那种操作
+	int checkResult;//表明用户参数的合法与否，辨别用户想要做哪种操作
 public:
 	//一些标志变量
 	static const int INVALID = 0;//参数不合法

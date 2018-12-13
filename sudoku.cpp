@@ -35,7 +35,7 @@ void printArray(int a[], int n) {
 void createSudokuFile(int n, string filename) {
 	//申明
 	void getFirstPermutation(int no);
-	void createModelSudoku(string filename);
+	void createModelSudoku();
 	void newFromModel();
 	void outputSudoku(string filename);
 
@@ -49,7 +49,7 @@ void createSudokuFile(int n, string filename) {
 	//过程中检查数量是否满足要求，不满足反复上面的不走
 	while (need > 0) {
 		//生成原始阵列
-		createModelSudoku(filename);
+		createModelSudoku();
 		//cout << "Model Array:\n";
 		//outputSudoku(filename);
 		//进行变换得到36个不重复的合法数独阵列
@@ -72,7 +72,7 @@ void getFirstPermutation(int No) {
 }
 
 //产生原始阵列
-void createModelSudoku(string filename) {
+void createModelSudoku() {
 	//填入第一行
 	for (int j = 0; j < N; j++)
 		sudokuArray[0][j] = firstRow[j];
@@ -139,7 +139,7 @@ void newFromModel() {
 			string lastThreeRows = "";
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < N - 1; j++) {
-					//每生成一个数字，直接保存。足以空格和换行。
+					//每生成一个数字，直接保存。注意空格和换行。
 					//cout << "（" << sudokuArray[B[index] - 1][j] << "）";
 					lastThreeRows += to_string(sudokuArray[B[i] - 1][j]);
 					lastThreeRows += " ";
@@ -164,5 +164,77 @@ void newFromModel() {
 		}
 		//A的下一个排列
 		next_permutation(A, A + 3);
+	}
+}
+
+
+/*******************************************************/
+//类ArgCheck的实现
+int ArgCheck::check() {
+	//申明
+	bool isPurenumber(char* s);
+	//验证传入参数的合法性
+	if (argc != 3) {//数量
+		cout << "参数数量过少或过多" << endl;
+		return checkResult = INVALID;
+	}
+	if (strcmp("-c", argv[1]) != 0 && strcmp("-s", argv[1]) != 0)//-s和-c检查
+	{
+		cout << "请输入-c或-s" << endl;
+		return checkResult = INVALID;
+	}
+	if (strcmp("-c", argv[1]) == 0) {//生成终局
+		if (!isPurenumber(argv[2])) {//生成终局数必须为数字
+			cout << "生成终局数必须为数字" << endl;
+			return checkResult = INVALID;
+		}
+		return checkResult = FORC;
+	}
+	else {//求解数独
+		return checkResult = FORS;
+	}
+}
+
+//判断输入是否问纯数字
+bool isPurenumber(char* s) {
+	int n = strlen(s);
+	for (int i = 0; i < n; i++)
+		if (s[i] > '9' || s[i] < '0')
+			return false;
+	return true;
+}
+
+/*******************************************************/
+/*******************************************************/
+//类SudokuFactory的实现
+//生成第一个模板
+void SudokuFactory::createFirstModel() {
+	int number[N] = { 1,2, 3, 4, 5, 6, 7, 8, 9 };
+	//随机确定最开始的排列
+	srand((unsigned int)time(NULL));
+	int ran = 0 + rand() % randow;
+	cout << "AtomCreate...." << endl;
+	for (int i = 0; i < ran; i++)
+		next_permutation(number + 1, number + N);
+	//填入学号
+	firstR[0] = 1;
+	for (int i = 1; i < N; i++)
+		firstR[i] = number[i];
+	cout << "第一行:\n";
+	printArray(firstR, N);
+
+}
+
+//更新模板
+void SudokuFactory::refreshModel() {
+	next_permutation(firstR + 1, firstR + N);//取得下一个排列
+}
+
+
+void printSudoku(int a[N][N]) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++)
+			cout << a[i][j] << " ";
+		cout << "\n";
 	}
 }

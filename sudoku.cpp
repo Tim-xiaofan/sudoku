@@ -18,7 +18,7 @@ const int randow = 210;//随机程度
 
 const string filename = "sudoku.txt";
 
-
+ofstream file(filename);
 
 //用于调试
 /*void printArray(int a[], int n) {
@@ -128,34 +128,36 @@ void SudokuFactory::newFromModel() {
 	int A[3] = { 4, 5, 6 };//456为一组
 	int B[3] = { 7, 8, 9 };//456为一组
 	//前三行不变
-	string firstThreeRows = "";// 保存123行
+	char firstThreeRows[N * 6];// 保存123行
+	int index = 0;
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < N - 1; j++) {
-			firstThreeRows += (model[i][j]);
-			firstThreeRows += " ";
+			firstThreeRows [index++]= (model[i][j]);
+			firstThreeRows[index++] = ' ';
 		}
-		firstThreeRows += (model[i][N - 1]);
-		firstThreeRows += "\n";//换行
+		firstThreeRows[index++] = (model[i][N - 1]);
+		firstThreeRows[index++] = '\n';//换行
 	}
 	//cout << sudokuString;
 	for (int a = 0; a < 6; a++) {
 		//确定A组456,的一个排列
 		//cout << "!!!!!!!!!!A:\n";
 		//printArray(A, 3);
-		string midThreeRows = "";//保存456行
+		char midThreeRows[6 * N];//保存456行
+		int index = 0;
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < N - 1; j++) {
 				//每生成一个数字，直接保存。注意空格和换行。
 				//cout << "（" << sudokuArray[A[index] - 1][j] << "）";
-				midThreeRows += (model[A[i] - 1][j]);
-				midThreeRows += " ";
+				midThreeRows[index++] = (model[A[i] - 1][j]);
+				midThreeRows[index++] = ' ';
 				//cout <<"\n<"<< sudokuString << ">" << endl;
 				//cout << sudokuString;
 			}
 			//cout << "（" << sudokuArray[A[index] - 1][N - 1] << "）" << endl;
-			midThreeRows += (model[A[i] - 1][N - 1]);//行尾没有空格
+			midThreeRows[index++] = (model[A[i] - 1][N - 1]);//行尾没有空格
 			//cout << "\n<" << sudokuString << ">" << endl;
-			midThreeRows += "\n";//换行
+			midThreeRows[index++] = '\n';//换行
 		}
 		//cout << "transA:";
 		//cout << "\n<" << sudokuString << ">" << endl;
@@ -164,29 +166,30 @@ void SudokuFactory::newFromModel() {
 			//确定B组789，的一个排列
 			//cout << "B:\n";
 			//printArray(B, 3);
-			string lastThreeRows = "";
+			char lastThreeRows[6 * N];
+			int index = 0;
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < N - 1; j++) {
 					//每生成一个数字，直接保存。注意空格和换行。
 					//cout << "（" << sudokuArray[B[index] - 1][j] << "）";
-					lastThreeRows += (model[B[i] - 1][j]);
-					lastThreeRows += " ";
+					lastThreeRows[index++] = (model[B[i] - 1][j]);
+					lastThreeRows[index++] = ' ';
 				}
 				//cout << "（" << sudokuArray[B[index] - 1][N - 1] << "）" << endl;
-				lastThreeRows += (model[B[i] - 1][N - 1]);//行尾没有空格
-				lastThreeRows += "\n";//换行
+				lastThreeRows[index++] = (model[B[i] - 1][N - 1]);//行尾没有空格
+				lastThreeRows[index++] = '\n';//换行
 				//cout << sudokuString;
 			}
 			//剩余需求量变化-1
 			need--;
-			string oneSudokuString = firstThreeRows + midThreeRows + lastThreeRows;
+			//直接输出到文件
+			store(firstThreeRows,midThreeRows,lastThreeRows);
 			//cout << "need = " << need << endl;
 			//cout << "transB:";
-			sudokuStore += oneSudokuString;
 			//cout << oneSudokuString;
 			if (need == 0) return;//为零则，结束生成
 			//cout << "\n";//添加数独阵列间空行
-			sudokuStore += "\n";
+			sudokuStore[index_store++] = '\n';
 			//B的下一个排列
 			next_permutation(B, B + 3);
 		}
@@ -195,8 +198,18 @@ void SudokuFactory::newFromModel() {
 	}
 }
 
+void SudokuFactory::store(char a[], char b[], char c[]) {
+	int k1 = 6 * N;
+	for (int i = 0; i < k1; i++)
+		sudokuStore[index_store++] = a[i];
+	for (int i = 0; i < k1; i++)
+		sudokuStore[index_store++] = b[i];
+	for (int i = 0; i < k1; i++)
+		sudokuStore[index_store++] =c[i];
+}
+
 //生成终局文件
-string SudokuFactory::createSudokuFile() {
+char* SudokuFactory::createSudokuFile() {
 	while (need > 0) {
 		newFromModel();
 		refreshModel();

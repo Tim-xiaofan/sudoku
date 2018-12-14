@@ -33,10 +33,13 @@ int main(int argc, char** argv) {
 		//生成数独终局文件suduku.txt
 		//createSudokuFile(n, fileName);
 		SudokuFactory factory(n);
-		string fileString = factory.createSudokuFile();
+		char* fileString = factory.createSudokuFile();
+		//cout << "sizeof(fileString)" << sizeof(fileString) << endl;
 		//cout << fileString;
 		ofstream file(fileName);
 		if (!file.is_open()) cout << "打开文件失败" << endl;
+		int k = 18 * 9 * n + n - 1;
+		//cout << "k = " << k << endl;
 		file << fileString;
 		cout << " 完成 " << endl;
 	}

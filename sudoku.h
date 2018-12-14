@@ -35,12 +35,15 @@ public:
 class SudokuFactory {
 	static const int N = 9;
 	int need;//剩余需求量
+	int index_store;
 	char firstR[N];
 	char model[N][N];//模板
-	string sudokuStore;//保存终局
+	char* sudokuStore;//保存终局
 public:
 	SudokuFactory(int m_need = 0 ) {
 		need = m_need; 
+		index_store = 0;
+		sudokuStore = (char*)malloc(sizeof(char) * (18*N*need + need - 1));
 		createFirstModel();//自动生成第一个模板
 	}
 	//  检查剩余需求量
@@ -55,8 +58,12 @@ public:
 	//在原始阵列基础上进行变换并输出36个排列
 	void newFromModel();
 	//生成终局文件
-	string createSudokuFile();
+	char* createSudokuFile();
 	string getsudokuStore() { return sudokuStore; }
+	void store(char a[], char b[], char c[]);
+	~SudokuFactory(){
+		free(sudokuStore);
+	}
 };
 
 #endif // !SUDOKU_H

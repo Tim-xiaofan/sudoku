@@ -36,14 +36,18 @@ class SudokuFactory {
 	static const int N = 9;
 	int need;//剩余需求量
 	int index_store;
-	char firstR[N];
+	char* firstR;
 	char model[N][N];//模板
 	char* sudokuStore;//保存终局
 public:
 	SudokuFactory(int m_need = 0 ) {
 		need = m_need; 
-		index_store = 0;
-		sudokuStore = (char*)malloc(sizeof(char) * (18*N*need + need - 1));
+		index_store = 0;//j记录当前字符数量
+		sudokuStore = (char*)malloc(sizeof(char) * (18*N*need + need));
+		firstR = (char*)malloc(sizeof(int)*N);
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N; j++)
+				model[i][j] = '0';
 		createFirstModel();//自动生成第一个模板
 	}
 	//  检查剩余需求量

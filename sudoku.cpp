@@ -214,6 +214,7 @@ char* SudokuFactory::createSudokuFile() {
 		newFromModel();
 		refreshModel();
 	}
+	sudokuStore[index_store++] = '\0';//记得输入结束标识
 	return sudokuStore;
 }
 

@@ -4,6 +4,7 @@
 #include<sstream>
 #include<fstream>
 #include "sudoku.h"
+#include "s_sudoku.h"
 
 using namespace std;
 
@@ -43,9 +44,17 @@ int main(int argc, char** argv) {
 		file << fileString;
 		cout << " 完成 " << endl;
 	}
+	/*ifstream file_in("main.cpp");
+	string line;
+	while (!file_in.eof()) {
+		getline(file_in, line);
+		cout << line << "test " << endl;
+	}*/
 	if (flag == ArgCheck::FORS) {//求解数独
 		cout << " 开始求解数独 " << endl;
 		//getSudokuSolution(fileName);
+		SudokuSolve ssolve;
+		ssolve.solve();
 	}
 }
 

@@ -1,0 +1,70 @@
+#pragma once
+#ifndef S_SUDOKU_H
+#define S_SUDOKU_H
+
+#include <fstream>
+#include <string>
+//列、行、宫
+class Rules {
+	static const int N = 9;
+	bool* number;//数字填写情况，number[i] = true,表示i(1, 2, ...,9)已近填入
+public :
+	Rules(){
+		number = new bool[N];
+		for (int i = 0; i < N; i++)
+			number[i] = false;
+	}
+	//判断数字num是否已经填入
+	bool is_added_number(int num);
+	//将数字num填入
+	void add_number(int number);
+	////将数字num移除
+	void delete_number(int num);
+	~Rules() { delete number; }
+};
+//空格
+class Space {
+	int row, col, palace_index;//列号，行号，宫号。
+	int solution_cout;//可行解个数
+	int remain_count;
+	char* solutions;//可行解集合
+public:
+	Space(int m_row = 0, int m_col = 0) {
+		row = m_col;
+		col = m_col;
+		solution_cout = 0;
+		solutions = 0;
+		remain_count = 0;
+		palace_index = 0;
+	}
+	//判断当空格是否还有其它可行解;
+	bool is_there_solutions();
+	//返回下一个可行解, 没有则返回‘0’
+	char next_solution();
+};
+
+//SudokuSolve.class使用者提供那个数独题目文件参数，调用solve()方法解出数独终局
+class SudokuSolve {
+	static const int N = 9;
+	//数独限制条件
+	Rules* rows;
+	Rules* cols;
+	Rules* palaces;
+	//空格区域
+	Space* spaces;
+	//当前阵列情况
+	char array[N][N];
+	//终局
+	char* sudoku_store;
+	//提取出一个数独谜题
+	bool next_puzzle();
+	//解决一个数独
+	void puzzle_solve();
+	//刷新行，列，宫
+public:
+	SudokuSolve();
+	char* solve();
+};
+
+#endif // !S_SUDOKU_H
+

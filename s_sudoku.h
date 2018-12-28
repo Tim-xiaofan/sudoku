@@ -7,7 +7,7 @@
 //列、行、宫
 class Rules {
 	static const int N = 9;
-	bool* number;//数字填写情况，number[i] = true,表示i(1, 2, ...,9)已填入
+	bool* number;//数字填写情况，number[i] = true,表示(i + 1), i + 1 = (1, 2, ...,9)已填入
 public :
 	Rules(){
 		number = new bool[N];
@@ -20,6 +20,7 @@ public :
 	void add_number(int number);
 	////将数字num移除
 	void delete_number(int num);
+	void clear();
 	void print();
 	~Rules() { delete number; }
 };
@@ -36,7 +37,7 @@ public:
 		solution_cout = 0;
 		solutions = 0;
 		remain_count = 0;
-		palace_index = m_row / 3 + m_col / 3;
+		palace_index = m_row / 3 * 3 + m_col / 3;
 	}
 	//判断当空格是否还有其它可行解;
 	bool is_there_solutions();
@@ -64,6 +65,7 @@ class SudokuSolve {
 	//解决一个数独
 	void puzzle_solve();
 	//刷新行，列，宫
+	void rules_clear();
 public:
 	SudokuSolve();
 	char* solve();

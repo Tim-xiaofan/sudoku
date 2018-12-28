@@ -20,6 +20,9 @@ const string filename = "sudoku.txt";
 
 ofstream file(filename);
 
+//偏移值
+int offset[N] = { 0,3,6,1,4,7,2,5,8 };
+
 //用于调试
 /*void printArray(int a[], int n) {
 	for (int i = 0; i < n; i++)
@@ -89,7 +92,7 @@ void SudokuFactory::createFirstModel() {
 	//剩余行
 	for (int i = 1; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			int k = (j + (N - i)) % N;//计算偏移坐标
+			int k = (j +  offset[i]) % N;//计算偏移坐标
 			//cout << " deta= " << (N - i) << endl;
 			model[i][j] = firstR[k];
 		}

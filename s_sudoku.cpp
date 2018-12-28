@@ -27,7 +27,7 @@ void  Rules::add_number(int num) {
 void  Rules::delete_number(int num) {
 	number[num - 1] = false;
 }
-void Rules::clear(){
+void Rules::reset(){
 	for (int i = 0; i < N; i++)
 		number[i] = false;
 }
@@ -41,23 +41,35 @@ void Rules::print(){
 //Space.class
 //判断当空格是否还有其它可行解;
 bool Space::is_there_solutions() {
-	if (remain_count == solution_cout) return false;
+	if (used_count == solution_count) return false;
 	return  true;
 }
 //返回下一个可行解, 没有则返回‘0’
 char Space::next_solution() {
 	if (!is_there_solutions()) return '0';
-	return solutions[remain_count++];
+	for(int i = 0; i < solution_count; i++)
+		if (!used[i]) {
+			used_count++;
+			used[i] = true;
+			return solutions[i];
+		}
+	return '0';
 }
+//输出space
 void Space::print(){
 	cout << "(" << row <<"," << col << "," << palace_index << "):";
-	for (int i = 0; i < remain_count; i++)
+	for (int i = 0; i < solution_count; i++)
 		cout << solutions[i] << " ";
+}
+//重置space
+void Space::reset(){
+	solution_count = 0;
+	used_count = 0;
+	reset_used();
 }
 /******************************************/
 /******************************************/
 //SudokuSolve.class
-
 const string filename = "sudoku.txt";
 SudokuSolve::SudokuSolve() {
 	rows = new Rules[N];
@@ -75,10 +87,10 @@ char* SudokuSolve::solve() {
 	//cout << "test 1\n";
 	while (next_puzzle()) {//取得一个谜题
 		//解决谜题保存终局
-		//init_spaces();
-		//puzzle_solve(0);
+		init_spaces();
+		puzzle_solve(0);
 		//cout << "test 2\n";
-		rules_clear();
+		rules_reset();
 	}
 	cout << "test 1\n";
 	return NULL;
@@ -93,7 +105,8 @@ void SudokuSolve::print_array(){
 	cout << "\n";
 }
 
-void SudokuSolve::refresh(int num, int space_index){
+//更新数字占用情况
+void SudokuSolve::cover(int num, int space_index){
 	int row = spaces[space_index].get_row();
 	int col = spaces[space_index].get_col();
 	int palace_index = spaces[space_index].get_palace();
@@ -103,6 +116,18 @@ void SudokuSolve::refresh(int num, int space_index){
 	array[row][col] = num;
 }
 
+//恢复
+void SudokuSolve::resume(int space_index){
+	int row = spaces[space_index].get_row();
+	int col = spaces[space_index].get_col();
+	int palace_index = spaces[space_index].get_palace();
+	int num = spaces[space_index].current_num;
+	rows[row].delete_number(num);
+	cols[col].delete_number(num);
+	palaces[palace_index].delete_number(num);
+	array[row][col] = 0;
+}
+
 //初始化spaces,包括可填数字，数量
 void SudokuSolve::init_spaces(){
 	//cout << "test\n";
@@ -110,48 +135,98 @@ void SudokuSolve::init_spaces(){
 	for (int i = 0; i < space_count; i++)
 		for (int j = 1; j <= N; j++)
 			if (try_to_add(j, i))
-				spaces[i].solutions[spaces[i].remain_count++] = j + '0';
-	for (int i = 0; i < space_count; i++) {
+				spaces[i].solutions[spaces[i].solution_count++] = j + '0';
+	/*for (int i = 0; i < space_count; i++) {
 		spaces[i].print();
 		cout << "\n";
-	}		
+	}*/	
 }
 
 //求解数独
-bool SudokuSolve::puzzle_solve(int k) {
+bool SudokuSolve::puzzle_solve(int space_index) {
 	int flag = 0;
-	if (k == space_count - 1) {
-		//找可行解
-		for (int i = 1; i <= N; i++) //判断i是否为可行解
-			if (try_to_add(i, k)) {
+	int count = spaces[space_index].solution_count;//当前空格可填数字个数
+	int solution = 0;
+	int row = spaces[space_index].get_row();
+	int col = spaces[space_index].get_col();
+	int palace_index = spaces[space_index].get_palace();
+	if (space_index == space_count - 1) {//最后一个空格
+		//验证可行解
+		for (int i = 0; i < count && !spaces[space_index].used[i]; i++) {
+			solution = spaces[space_index].solutions[i];
+			if (try_to_add(solution, space_index)) {
+				spaces[space_index].used[i] = true;
+				spaces[space_index].used_count++;
 				flag = 1;
-				//更新当前状态
-				refresh(i, k);
+				array[row][col] = solution + '0';
 				break;
 			}
-		if (flag == 0)return false;
-		//输出结果
-		print_array();
-		return true;
-	}
-	else {
-		//找当前层可行解
-		for (int i = 1; i <= N; i++) //判断i是否为可行解
-			if (try_to_add(i, k)) {
-				//更新当前占用状态
-				refresh(i, k);
-				if(puzzle_solve(k + 1)) flag = 1;
+		}
+		//得到一个完整结果
+		if (flag == 1) {
+			print_array();
+			return true;
+		}
+		else {
+			int k = space_index - 1;
+			while (k > 0) {//回溯
+				if (spaces[k--].is_there_solutions()) {//回溯到有其他解的节点
+					puzzle_solve(k);
+					break;
+				}
+				else resume(k--);//恢复,0不用
 			}
+			if (k == 0) {//回溯到了第一个空格
+				if (!spaces[0].is_there_solutions())return false;//无解
+				puzzle_solve(0);
+			}
+		}
+	}
+	else {//中间的某个空格
+		//验证可行解
+		for (int i = 0; i < count && !spaces[space_index].used[i]; i++) {
+			solution = spaces[space_index].solutions[i];
+			if (try_to_add(solution, space_index)) {
+				spaces[space_index].used[i] = true;
+				spaces[space_index].used_count++;
+				flag = 1;
+				array[row][col] = solution + '0';
+				break;
+			}
+		}
+		//当前层有解,则继续往前求解
+		if (flag == 1) {
+			int k = space_index;
+			puzzle_solve(++k);
+			return true;
+		
+		}
+		else {//当前层没有解, 则回溯
+			int k = space_index - 1;
+			while (k > 0) {//回溯
+				if (!spaces[k--].is_there_solutions()) {//回溯到有其他解的节点
+					puzzle_solve(k);
+					break;
+				}
+				else resume(k--);//恢复,0不用
+			}
+			if (k == 0) {//回溯到了第一个空格
+				if (!spaces[0].is_there_solutions())return false;//无解
+				puzzle_solve(0);
+			}
+		}
 	}
 	return false;
 }
 
-void SudokuSolve::rules_clear(){
+void SudokuSolve::rules_reset(){
 	for (int i = 0; i < N; i++) {
-		rows[i].clear();
-		cols[i].clear();
-		palaces[i].clear();
+		rows[i].reset();
+		cols[i].reset();
+		palaces[i].reset();
 	}
+	for (int i = 0; i < space_count; i++)
+		spaces[i].reset();
 	space_count = 0;
 }
 
@@ -200,7 +275,7 @@ bool SudokuSolve::next_puzzle() {
 		//cout << "\n";
 	}
 	//cout << "test 4\n";
-	for (int i = 0; i < N; i++) {
+	/*for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++)
 			cout << array[i][j] << " ";
 		cout << "\n";

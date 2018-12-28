@@ -7,7 +7,7 @@
 //列、行、宫
 class Rules {
 	static const int N = 9;
-	bool* number;//数字填写情况，number[i] = true,表示i(1, 2, ...,9)已近填入
+	bool* number;//数字填写情况，number[i] = true,表示i(1, 2, ...,9)已填入
 public :
 	Rules(){
 		number = new bool[N];
@@ -20,6 +20,7 @@ public :
 	void add_number(int number);
 	////将数字num移除
 	void delete_number(int num);
+	void print();
 	~Rules() { delete number; }
 };
 //空格
@@ -30,17 +31,18 @@ class Space {
 	char* solutions;//可行解集合
 public:
 	Space(int m_row = 0, int m_col = 0) {
-		row = m_col;
+		row = m_row;
 		col = m_col;
 		solution_cout = 0;
 		solutions = 0;
 		remain_count = 0;
-		palace_index = 0;
+		palace_index = m_row / 3 + m_col / 3;
 	}
 	//判断当空格是否还有其它可行解;
 	bool is_there_solutions();
 	//返回下一个可行解, 没有则返回‘0’
 	char next_solution();
+	void print();
 };
 
 //SudokuSolve.class使用者提供那个数独题目文件参数，调用solve()方法解出数独终局
@@ -52,6 +54,7 @@ class SudokuSolve {
 	Rules* palaces;
 	//空格区域
 	Space* spaces;
+	int space_count;
 	//当前阵列情况
 	char array[N][N];
 	//终局

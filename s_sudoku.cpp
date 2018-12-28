@@ -19,11 +19,18 @@ bool Rules::is_added_number(int num) {
 //将数字num填入
 void  Rules::add_number(int num) {
 	number[num] = true;
+	//for (int i = 0; i < N; i++)
+		//cout << number;
 }
 
 //将数字num移除
 void  Rules::delete_number(int num) {
 	number[num] = false;
+}
+void Rules::print(){
+	cout << "test: ";
+	for(int num = 1; num <= N; num++)
+		if(is_added_number(num))cout << num << " ";
 }
 /******************************************/
 /******************************************/
@@ -38,6 +45,9 @@ char Space::next_solution() {
 	if (!is_there_solutions()) return '0';
 	return solutions[remain_count++];
 }
+void Space::print(){
+	cout << "(" << row <<"," << col << "," << palace_index << ")";
+}
 /******************************************/
 /******************************************/
 //SudokuSolve.class
@@ -47,32 +57,78 @@ SudokuSolve::SudokuSolve() {
 	rows = new Rules[N];
 	cols = new Rules[N];
 	palaces = new Rules[N];
-	spaces = NULL;
+	spaces = new Space[N * N];
 	sudoku_store = NULL;
+	space_count = 0;
 }
 
 char* SudokuSolve::solve() {
 	file.open("test.txt");
 	if (!file.is_open()) cout << "file error\n";
-	int i = 0;
 	while (next_puzzle()) {//取得一个谜题
 		//解决谜题保存终局
-		i++;
-		cout << "i = "<< i << endl;
-		//puzzle_solve();
+		puzzle_solve();
 	}
 	return NULL;
 }
+void SudokuSolve::puzzle_solve() {
 
+}
+
+//取数独题，初始化宫，列，行
 bool SudokuSolve::next_puzzle() {
 	if (file.eof()) return false;
 	string line;
-	for (int i = 0; i < N + 1; i++) {
+	char c;
+	int len = 0;
+	space_count = 0;
+	for (int i = 0; i < N + 1; i++) {//10行,i为行号，index为列号
 		getline(file, line);
-		cout << line << endl;
+		if (i == 9)break;
+		len = line.length();
+		for (int j = 0, index = 0; j < len; j++) {
+			c = line[j];
+			//cout << c;
+			if (c >= '0' && c <= '9') {
+				array[i][index] = c;
+				if (c == '0') {
+					spaces[space_count++] = Space(i, index);
+				}
+				else {
+					cols[index].add_number(c - '0');
+					rows[i].add_number(c - '0');
+					palaces[i / 3 + index / 3].add_number(c - '0');
+				}
+				index++;
+			}
+		}
+		//cout << "\n";
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++)
+			cout << array[i][j] << " ";
+		cout << "\n";
+	}
+	cout << "\n";
+	/*for (int i = 0; i < space_count; i++) {
+		spaces[i].print();
+		cout << "\n";
+	}
+	cout << "\n";
+	for (int i = 0; i < N; i++) {
+		rows[i].print();
+		cout << "\n";
+	}
+	cout << "\n";
+	for (int i = 0; i < N; i++) {
+		cols[i].print();
+		cout << "\n";
+	}*/
+	for (int i = 0; i < N; i++) {
+		palaces[i].print();
+		cout << "\n";
 	}
 	return true;
 }
-
 
 

@@ -54,7 +54,8 @@ int main(int argc, char** argv) {
 		cout << " 开始求解数独 " << endl;
 		//getSudokuSolution(fileName);
 		SudokuSolve ssolve;
-		ssolve.solve();
+		ssolve.solve(argv[2]);
+		cout << " 完成 " << endl;
 	}
 }
 

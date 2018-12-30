@@ -123,7 +123,7 @@ class SudokuSolve {
 	void print_space_status(int space_index);
 public:
 	SudokuSolve();
-	char* solve();
+	char* solve(char* filename);
 };
 
 #endif // !S_SUDOKU_H

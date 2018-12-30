@@ -100,8 +100,8 @@ SudokuSolve::SudokuSolve() {
 }
 
 //解出所有数独
-char* SudokuSolve::solve() {
-	test_file.open("test.txt");
+char* SudokuSolve::solve(char* filename) {
+	test_file.open(filename);
 	output_file.open("sudoku.txt");
 	if (!test_file.is_open()) cout << "file error\n";
 	//cout << "test 1\n";

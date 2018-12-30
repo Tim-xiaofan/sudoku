@@ -18,7 +18,7 @@ const int randow = 210;//随机程度
 
 const string filename = "sudoku.txt";
 
-ofstream file(filename);
+ofstream test_file(filename);
 
 //偏移值
 int offset[N] = { 0,3,6,1,4,7,2,5,8 };

@@ -8,7 +8,8 @@
 
 using namespace std;
 
-ifstream file;
+ifstream test_file;
+ofstream output_file;
 
 /******************************************/
 //Rules.class
@@ -100,15 +101,16 @@ SudokuSolve::SudokuSolve() {
 
 //解出所有数独
 char* SudokuSolve::solve() {
-	file.open("test.txt");
-	if (!file.is_open()) cout << "file error\n";
+	test_file.open("test.txt");
+	output_file.open("sudoku.txt");
+	if (!test_file.is_open()) cout << "file error\n";
 	//cout << "test 1\n";
 	while (get_puzzle()) {//取得一个谜题
 		//解决谜题保存终局
 		init_spaces();
 		//求解
-		cout << "求解：\n";
-		print_array();
+		//cout << "求解：\n";
+		//print_array();
 		puzzle_solve(0);
 		//cout << "test 2\n";
 		rules_reset();
@@ -119,11 +121,11 @@ char* SudokuSolve::solve() {
 
 void SudokuSolve::print_array(){
 	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++)
-			cout << array[i][j] << " ";
-		cout << "\n";
+		for (int j = 0; j < N - 1; j++)
+			output_file << array[i][j] << " ";
+		output_file << array[i][N-1]  <<"\n";//行末无空格
 	}
-	cout << "\n";
+	output_file << "\n";
 }
 
 //更新数字占用情况
@@ -221,13 +223,13 @@ bool SudokuSolve::puzzle_solve(int space_index) {
 		}
 		//得到一个完整结果
 		if (flag == 1) {
-			cout << "得到一个完整结果\n";
+			//cout << "得到一个完整结果\n";
 			print_array();
 			return true;
 		}
 		else {
 			if (space_index == 0) {//
-				cout << "无解\n";
+				//cout << "无解\n";
 				return false;
 			}
 			int k = space_index - 1;
@@ -308,15 +310,15 @@ bool SudokuSolve::try_to_add(char num, int space_index){
 
 //取数独题，初始化宫，列，行
 bool SudokuSolve::get_puzzle() {
-	if (file.eof()) {  return false; }
+	if (test_file.eof()) {  return false; }
 	//cout << "test 4\n";
 	string line;
 	char c;
 	int len = 0;
 	space_count = 0;
 	for (int i = 0; i < N + 1; i++) {//读10行,i为行号，index为列号
-		if (file.eof()) { break; }
-		getline(file, line);
+		if (test_file.eof()) { break; }
+		getline(test_file, line);
 		//cout <<'\\'<< line <<'\\'<< endl;
 		if (i == 9)break;
 		len = line.length();

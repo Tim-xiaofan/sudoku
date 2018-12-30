@@ -15,11 +15,11 @@ public :
 			number[i] = false;
 	}
 	//判断数字num是否已经填入
-	bool is_added_number(int num);
+	bool is_added_number(char num);
 	//将数字num填入
-	void add_number(int number);
+	void add_number(char number);
 	////将数字num移除
-	void delete_number(int num);
+	void delete_number(char num);
 	void reset();
 	void print();
 	~Rules() { delete number; }
@@ -35,14 +35,14 @@ class Space {
 	int used_count;//已经用过的可填数字
 	char solutions[9];//可行解集合
 	bool used[9];
-	int current_num;//当前填入的值
+	char current_num;//当前填入的值
 public:
 	Space(int m_row = 0, int m_col = 0) {
 		row = m_row;
 		col = m_col;
 		solution_count = 0;
 		used_count = 0;
-		current_num;
+		current_num = '0';
 		palace_index = m_row / 3 * 3 + m_col / 3;
 		reset_used();
 	}
@@ -85,31 +85,42 @@ public:
 class SudokuSolve {
 	static const int N = 9;
 	//数独限制条件
-	Rules* rows;
-	Rules* cols;
-	Rules* palaces;
+	static Rules* rows;
+	static Rules* cols;
+	static Rules* palaces;
 	//空格区域
-	Space* spaces;
+	static Space* spaces;
 	int space_count;
 	//当前阵列情况
-	char array[N][N];
+	static char array[N][N];
 	//终局
 	char* sudoku_store;
 	//提取出一个数独谜题
-	bool next_puzzle();
+	bool get_puzzle();
 	//解决一个数独
 	bool puzzle_solve(int k);
 	//刷新行，列，宫
 	void rules_reset();
 	//判断数字num是否能填入
-	bool try_to_add(int mum, int space_index);
+	bool try_to_add(char mum, int space_index);
 	void print_array();
 	//更新占用状态
-	void cover(int num, int space_index);
-	//恢复
-	void resume(int space_index);
+	void refresh_rules(char num, int space_index, bool delete_num);
+	//回溯到某个有解节点时要先进行占用更新,再求解
+	//由于回溯到的节点已经填了某个数字，要先移除这个数字
+	void clear_space(int space_index);
+	//回溯经过的空格进行重置:用过的可行解重新变为为没用过
+	//同时，也要clear_space
+	void reset_space(int space_index) {
+		spaces[space_index].reset_used();
+		clear_space(space_index);
+	}
 	//初始化空格区域
 	void init_spaces();
+	//初始化静态成员
+	static void init_static();
+	//输出当前空格相关行，列，宫的占用情况
+	void print_space_status(int space_index);
 public:
 	SudokuSolve();
 	char* solve();
